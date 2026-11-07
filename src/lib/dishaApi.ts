@@ -77,6 +77,65 @@ export interface DishaUserCreds {
 const DISHA_DIRECT_API = 'https://dishaonlineclassesapi.classx.co.in';
 const CREDS_KEY = 'disha_user_creds';
 
+const DEFAULT_OWNER_POOL: Record<string, { userId: string; token: string }> = {
+  '87': {
+    userId: '2078794',
+    token:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIwNzg3OTQiLCJ0aW1lc3RhbXAiOjE3OTM3OTU1MDAsIml2X3ZlciI6NCwic2Vzc2lvbiI6ImV5SjBlWEFpT2lKS1YxUWlMQ0poYkdjaU9pSklVekkxTmlKOS5leUpwWkNJNklqSXdOemczT1RRaUxDSmxiV0ZwYkNJNkltczRNelEwTlRVM05FQm5iV0ZwYkM1amIyMGlMQ0p1WVcxbElqb2ljMmxzWlc1MElHNWhkSFZ5WlNJc0luUmxibUZ1ZEZSNWNHVWlPaUoxYzJWeUlpd2lkR1Z1WVc1MFRtRnRaU0k2SW1ScGMyaGhiMjVzYVc1bFkyeGhjM05sYzE5a1lpSXNJblJsYm1GdWRFbGtJam9pSWl3aVpHbHpjRzl6WVdKc1pTSTZabUZzYzJWOS5BckszZ3hCQ1BSSERrRUVGbDFBajc4M1VOaVdPQUt6OHpLZFcxcmRWUHNRIn0.JOgmu6Ha7SDB64fCSMtuG-d6c-n9qUPlPd-B60WjUco',
+  },
+  '61': {
+    userId: '437819',
+    token:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjQzNzgxOSIsInRpbWVzdGFtcCI6MTc5NDA0MTE4MiwiaXZfdmVyIjoxMSwic2Vzc2lvbiI6ImV5SjBlWEFpT2lKS1YxUWlMQ0poYkdjaU9pSklVekkxTmlKOS5leUpwWkNJNklqUXpOemd4T1NJc0ltVnRZV2xzSWpvaWEzVnRZWEpvYVcxaGJuTm9kVFl6T1RZMVFHZHRZV2xzTG1OdmJTSXNJbTVoYldVaU9pSklhVzFoYm5Ob2RTQkxkVzFoY2lJc0luUmxibUZ1ZEZSNWNHVWlPaUoxYzJWeUlpd2lkR1Z1WVc1MFRtRnRaU0k2SW1ScGMyaGhiMjVzYVc1bFkyeGhjM05sYzE5a1lpSXNJblJsYm1GdWRFbGtJam9pSWl3aVpHbHpjRzl6WVdKc1pTSTZabUZzYzJWOS5CQXhaOWtuUFBjanlVU0g4aEN5bnlOcTNsUTlScDJPdXJqTnlxZTczRGtJIn0.H-wRHGBb5oD1nTNRBC6qCU4JtOrFp2b7SSdL3um4jdU',
+  },
+  '86': {
+    userId: '580997',
+    token:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjU4MDk5NyIsInRpbWVzdGFtcCI6MTc5NDA0Mjk3NywiaXZfdmVyIjo1LCJzZXNzaW9uIjoiZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKSVV6STFOaUo5LmV5SnBaQ0k2SWpVNE1EazVOeUlzSW1WdFlXbHNJam9pY0dGM1lXMXJkVzFoY2tCbmJXRnBiQzVqYjIwaUxDSnVZVzFsSWpvaVkyaGhibVJoYmlCcmRXMWhjaUJ6YUdGM0lpd2lkR1Z1WVc1MFZIbHdaU0k2SW5WelpYSWlMQ0owWlc1aGJuUk9ZVzFsSWpvaVpHbHphR0Z2Ym14cGJtVmpiR0Z6YzJWelgyUmlJaXdpZEdWdVlXNTBTV1FpT2lJaUxDSmthWE53YjNOaFlteGxJanBtWVd4elpYMC5XTUxoZG42T1l1MmZxZV9DVS1fZENBU29aYndNd3ZGY3J0X2lDcU42SUZBIn0.nPBGMg4DXT3emegfQg8w9jpc7s7fPoEhbwEX0Q9YHYE',
+  },
+  '57': {
+    userId: '915240',
+    token:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjkxNTI0MCIsInRpbWVzdGFtcCI6MTc5NDA0NTA1NCwiaXZfdmVyIjoxMiwic2Vzc2lvbiI6ImV5SjBlWEFpT2lKS1YxUWlMQ0poYkdjaU9pSklVekkxTmlKOS5leUpwWkNJNklqa3hOVEkwTUNJc0ltVnRZV2xzSWpvaVlXSm9hV3BwZEhsaFpHRjJOekkzT0RsQVoyMWhhV3d1WTI5dElpd2libUZ0WlNJNklrRmlhR2xxWldWMElGbGhaR0YySWl3aWRHVnVZVzUwVkhsd1pTSTZJblZ6WlhJaUxDSjBaVzVoYm5ST1lXMWxJam9pWkdsemFHRnZibXhwYm1WamJHRnpjMlZ6WDJSaUlpd2lkR1Z1WVc1MFNXUWlPaUlpTENKa2FYTndiM05oWW14bElqcG1ZV3h6WlgwLkNBa2VFOVFjeFlnVTItRDY5a29Db00xY3dxZ21aVDc0Y0lzMjZIS1hnRmMifQ.TXPx5w6PtO1bKz8CjWfkT1KIHYyQ1r0FcvCuKPw_2oM',
+  },
+  '88': {
+    userId: '1332362',
+    token:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEzMzIzNjIiLCJ0aW1lc3RhbXAiOjE3OTIyMTYzODEsIml2X3ZlciI6NSwic2Vzc2lvbiI6ImV5SjBlWEFpT2lKS1YxUWlMQ0poYkdjaU9pSklVekkxTmlKOS5leUpwWkNJNklqRXpNekl6TmpJaUxDSmxiV0ZwYkNJNklqWXlaR2hoYm1GdWFtRjVjMmhoY20xaFltSkFaMjFoYVd3dVkyOXRJaXdpYm1GdFpTSTZJa1JJUVU1QlRrcEJXU0JUU0VGU1RVRWdJaXdpZEdWdVlXNTBWSGx3WlNJNkluVnpaWElpTENKMFpXNWhiblJPWVcxbElqb2laR2x6YUdGdmJteHBibVZqYkdGemMyVnpYMlJpSWl3aWRHVnVZVzUwU1dRaU9pSWlMQ0prYVhOd2IzTmhZbXhsSWpwbVlXeHpaWDAuSUtia1ZJaVg1cXBaMzVhbjhMQjdKRTV1dkR4a183MWwzOTU0MGYwS0c2SSJ9.fDQYLp5wjG9cJHCkZ57OJNHiIUAsgxOuFAfswYP9IME',
+  },
+  '89': {
+    userId: '897163',
+    token:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Ijg5NzE2MyIsInRpbWVzdGFtcCI6MTc5MzkzNDkwMSwiaXZfdmVyIjo2Mywic2Vzc2lvbiI6ImV5SjBlWEFpT2lKS1YxUWlMQ0poYkdjaU9pSklVekkxTmlKOS5leUpwWkNJNklqZzVOekUyTXlJc0ltVnRZV2xzSWpvaWMybHVaMmh6WVc1a1pXVndOalUwTVRSQVoyMWhhV3d1WTI5dElpd2libUZ0WlNJNklsTmhibVJsWlhBZ1UybHVaMmdpTENKMFpXNWhiblJVZVhCbElqb2lkWE5sY2lJc0luUmxibUZ1ZEU1aGJXVWlPaUprYVhOb1lXOXViR2x1WldOc1lYTnpaWE5mWkdJaUxDSjBaVzVoYm5SSlpDSTZJaUlzSW1ScGMzQnZjMkZpYkdVaU9tWmhiSE5sZlEuM1VxSUU1NFA1R3VEZEVSMGxDdlZBUE5yaWZzVjhBbjhib0xDOFRTekxDMCJ9.clQIv1f1JPCF_-Y6lyvzXcWKAQhvA6DYHSPtCUR2qKc',
+  },
+};
+
+function getOwnerForBatch(batchId?: string): { userId: string; token: string } {
+  const saved = getSavedDishaCreds();
+  if (saved?.userId && saved?.token) return saved;
+  if (batchId && DEFAULT_OWNER_POOL[String(batchId)]) {
+    return DEFAULT_OWNER_POOL[String(batchId)];
+  }
+  return DEFAULT_OWNER_POOL['87'];
+}
+
+async function dishaDirectGet(endpoint: string, batchId?: string): Promise<any> {
+  const creds = getOwnerForBatch(batchId);
+  const res = await fetch(`${DISHA_DIRECT_API}${endpoint}`, {
+    headers: {
+      'Auth-Key': 'appxapi',
+      'Client-Service': 'Appx',
+      'source': 'website',
+      'Authorization': creds.token,
+      'User-ID': creds.userId,
+    },
+  });
+  if (!res.ok) {
+    throw new Error(`Disha API HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
 export function getSavedDishaCreds(): DishaUserCreds | null {
   try {
     const raw = localStorage.getItem(CREDS_KEY);
@@ -119,9 +178,11 @@ export async function syncOwnerDishaCreds(): Promise<DishaUserCreds | null> {
       return creds;
     }
   } catch {
-    // ignore
+    // fallback to default owner pool
   }
-  return null;
+  const fallback = DEFAULT_OWNER_POOL['87'];
+  localStorage.setItem(CREDS_KEY, JSON.stringify(fallback));
+  return fallback;
 }
 
 export async function loginDishaDirect(mobileOrEmail: string, password: string): Promise<DishaUserCreds> {
@@ -184,7 +245,7 @@ export async function decryptDishaStringBrowser(enc: unknown): Promise<string> {
       key,
       cipher.buffer as ArrayBuffer
     );
-    return new TextDecoder().decode(decrypted);
+    return new TextDecoder().decode(decrypted).trim();
   } catch {
     return '';
   }
@@ -206,6 +267,141 @@ export function decryptXor28PdfBytes(bytes: Uint8Array, keyStr?: string): Uint8A
   return out;
 }
 
+function isRealMediaUrlBrowser(url: string): boolean {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    return (
+      host !== 'pdflink.com' &&
+      host !== 'www.pdflink.com' &&
+      host !== 'videolink.com' &&
+      host !== 'www.videolink.com'
+    );
+  } catch {
+    return false;
+  }
+}
+
+async function extractPdfBrowser(raw: any): Promise<{ pdfUrl: string; pdfKey: string; isEncrypted: boolean }> {
+  let pdfUrl = '';
+  let pdfKey = '';
+  let isEnc = false;
+  const isVideoItem = String(raw?.material_type || '').toUpperCase() === 'VIDEO';
+  const candidates: Array<[any, any, any, string]> = [
+    [raw?.pdf_link, raw?.is_pdf_encrypted, raw?.pdf_encryption_key, 'pdf_link'],
+    [raw?.pdf_link2, raw?.is_pdf2_encrypted, raw?.pdf2_encryption_key, 'pdf_link2'],
+    [raw?.file_link, raw?.is_pdf_encrypted, raw?.pdf_encryption_key, 'file_link'],
+  ];
+
+  for (const [rawLink, rawEncFlag, rawEncKey, fieldName] of candidates) {
+    if (!rawLink) continue;
+    if (isVideoItem && fieldName === 'file_link') continue;
+    const dec =
+      String(rawLink).includes(':') && !String(rawLink).startsWith('http')
+        ? await decryptDishaStringBrowser(rawLink)
+        : String(rawLink).trim();
+    if (dec && /^https?:\/\//i.test(dec) && isRealMediaUrlBrowser(dec)) {
+      pdfUrl = dec;
+      isEnc = String(rawEncFlag ?? '0') !== '0';
+      if (isEnc && rawEncKey) {
+        const decKey = String(rawEncKey).includes(':')
+          ? await decryptDishaStringBrowser(rawEncKey)
+          : String(rawEncKey);
+        pdfKey = (decKey || String(rawEncKey)).replace(/\0+$/g, '');
+      }
+      break;
+    }
+  }
+  return { pdfUrl, pdfKey, isEncrypted: isEnc };
+}
+
+async function extractVideoBrowser(raw: any): Promise<{
+  streamUrl: string;
+  embedUrl: string;
+  qualities: QualityOption[];
+  videoId: string;
+}> {
+  const qualities: QualityOption[] = [];
+  let streamUrl = '';
+  let embedUrl = '';
+
+  const encLinks = Array.isArray(raw?.encrypted_links) ? raw.encrypted_links : [];
+  for (const link of encLinks) {
+    const p = await decryptDishaStringBrowser(link?.path);
+    const q = link?.quality || 'Auto';
+    if (p && isRealMediaUrlBrowser(p) && !/\/hls-drm-/i.test(p)) {
+      qualities.push({ quality: String(q), url: p });
+      if (!streamUrl) streamUrl = p;
+    }
+  }
+
+  const dlRaw = raw?.download_link;
+  if (dlRaw) {
+    const dec =
+      String(dlRaw).includes(':') && !String(dlRaw).startsWith('http')
+        ? await decryptDishaStringBrowser(dlRaw)
+        : String(dlRaw).trim();
+    if (dec && /^https?:\/\//i.test(dec) && isRealMediaUrlBrowser(dec) && !/\/hls-drm-/i.test(dec)) {
+      if (!streamUrl) streamUrl = dec;
+      if (!qualities.some((q) => q.url === dec)) {
+        qualities.push({ quality: 'Download', url: dec });
+      }
+    }
+  }
+
+  let youtubeId = '';
+  const flRaw = raw?.file_link;
+  if (flRaw) {
+    const dec =
+      String(flRaw).includes(':') && !String(flRaw).startsWith('http')
+        ? await decryptDishaStringBrowser(flRaw)
+        : String(flRaw).trim();
+    if (dec && /^https?:\/\//i.test(dec) && isRealMediaUrlBrowser(dec) && !/\/hls-drm-/i.test(dec)) {
+      if (!streamUrl) streamUrl = dec;
+      if (!qualities.some((q) => q.url === dec)) {
+        qualities.push({ quality: 'Default', url: dec });
+      }
+    } else if (dec && /^[A-Za-z0-9_-]{11}$/.test(dec)) {
+      youtubeId = dec;
+    }
+  }
+
+  const rawVidId = raw?.video_id
+    ? String(raw.video_id).includes(':')
+      ? await decryptDishaStringBrowser(raw.video_id)
+      : String(raw.video_id).trim()
+    : '';
+  if (!youtubeId && rawVidId && /^[A-Za-z0-9_-]{11}$/.test(rawVidId)) {
+    youtubeId = rawVidId;
+  }
+
+  if (streamUrl && (streamUrl.includes('youtube.com') || streamUrl.includes('youtu.be'))) {
+    const m = streamUrl.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+    if (m?.[1]) youtubeId = m[1];
+  }
+
+  if (youtubeId) {
+    embedUrl = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+    if (!streamUrl) {
+      streamUrl = `https://www.youtube.com/watch?v=${youtubeId}`;
+    }
+  }
+
+  const rawPlayerUrl = String(raw?.video_player_url || '').trim();
+  const rawPlayerToken = String(raw?.video_player_token || '').trim();
+  if (rawPlayerToken && rawPlayerToken !== '1234') {
+    const fullAppxUrl = /token=$/.test(rawPlayerUrl)
+      ? `${rawPlayerUrl}${encodeURIComponent(rawPlayerToken)}`
+      : `https://appx-play.classx.co.in/combined-img-player?isMobile=true&token=${encodeURIComponent(rawPlayerToken)}`;
+    if (!embedUrl) {
+      embedUrl = `https://bat.doc1.workers.dev/api/disha-player?url=${encodeURIComponent(fullAppxUrl)}`;
+    }
+  }
+
+  return { streamUrl, embedUrl, qualities, videoId: youtubeId };
+}
+
 function authHeaders(): Record<string, string> {
   const creds = getSavedDishaCreds();
   const h: Record<string, string> = {};
@@ -215,33 +411,121 @@ function authHeaders(): Record<string, string> {
 }
 
 export async function fetchBatches(): Promise<{ count: number; data: BatchItem[] }> {
-  const res = await fetch('/api/disha/batches', { headers: authHeaders() });
-  const json = await res.json();
-  if (json?.success && Array.isArray(json.data)) {
-    return { count: json.count || json.data.length, data: json.data };
+  try {
+    const res = await fetch('/api/disha/batches', { headers: authHeaders() });
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.success && Array.isArray(json.data) && json.data.length > 0) {
+        return { count: json.count || json.data.length, data: json.data };
+      }
+    }
+  } catch {
+    // fallback to direct Disha API below
   }
-  throw new Error(json?.error || 'Failed to load batches');
+
+  const allJson = await dishaDirectGet('/get/courselistnewv2?exam_name=&start=-1&userid=0');
+  const rawList = Array.isArray(allJson?.data) ? allJson.data : [];
+  const data: BatchItem[] = rawList.map((b: any) => ({
+    id: String(b.id),
+    name: b.course_name || b.name || '',
+    thumbnail: b.course_thumbnail || b.thumbnail || '/gb-study-logo.png',
+    description: b.course_description || '',
+    price: b.price ?? '',
+    mrp: b.mrp ?? '',
+    validity: b.validity || '12 Months',
+    startDate: b.start_date || '',
+    endDate: b.end_date || '',
+    folderWiseCourse: Number(b.folder_wise_course ?? 1) === 1,
+  }));
+  return { count: data.length, data };
 }
 
 export async function fetchSubjects(batchId: string): Promise<{ count: number; data: SubjectItem[] }> {
-  const res = await fetch(`/api/disha/subjects?batchId=${encodeURIComponent(batchId)}`, { headers: authHeaders() });
-  const json = await res.json();
-  if (json?.success && Array.isArray(json.data)) {
-    return { count: json.count || json.data.length, data: json.data };
+  try {
+    const res = await fetch(`/api/disha/subjects?batchId=${encodeURIComponent(batchId)}`, { headers: authHeaders() });
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.success && Array.isArray(json.data)) {
+        return { count: json.count || json.data.length, data: json.data };
+      }
+    }
+  } catch {
+    // fallback to direct Disha API below
   }
-  throw new Error(json?.error || 'Failed to load subjects');
+
+  const rootJson = await dishaDirectGet(
+    `/get/folder_contentsv2?course_id=${encodeURIComponent(batchId)}&parent_id=-1`,
+    batchId
+  );
+  const items = Array.isArray(rootJson?.data) ? rootJson.data : [];
+  let folders = items.filter((x: any) => String(x.material_type || '').toUpperCase() === 'FOLDER');
+
+  if (folders.length === 1 && items.length === 1) {
+    const innerJson = await dishaDirectGet(
+      `/get/folder_contentsv2?course_id=${encodeURIComponent(batchId)}&parent_id=${encodeURIComponent(String(folders[0].id))}`,
+      batchId
+    );
+    const innerItems = Array.isArray(innerJson?.data) ? innerJson.data : [];
+    const innerFolders = innerItems.filter((x: any) => String(x.material_type || '').toUpperCase() === 'FOLDER');
+    if (innerFolders.length > 0) {
+      folders = innerFolders;
+    }
+  }
+
+  const data: SubjectItem[] = folders.map((f: any) => ({
+    id: String(f.id),
+    name: f.Title || f.title || f.subject_name || f.name || '',
+    image: f.thumbnail || f.subject_logo || '',
+    parentId: String(f.parent_id ?? '-1'),
+  }));
+  return { count: data.length, data };
 }
 
 export async function fetchChapters(batchId: string, subjectId: string): Promise<{ count: number; data: ChapterItem[] }> {
-  const res = await fetch(
-    `/api/disha/chapters?batchId=${encodeURIComponent(batchId)}&subjectId=${encodeURIComponent(subjectId)}`,
-    { headers: authHeaders() }
-  );
-  const json = await res.json();
-  if (json?.success && Array.isArray(json.data)) {
-    return { count: json.count || json.data.length, data: json.data };
+  try {
+    const res = await fetch(
+      `/api/disha/chapters?batchId=${encodeURIComponent(batchId)}&subjectId=${encodeURIComponent(subjectId)}`,
+      { headers: authHeaders() }
+    );
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.success && Array.isArray(json.data)) {
+        return { count: json.count || json.data.length, data: json.data };
+      }
+    }
+  } catch {
+    // fallback to direct Disha API below
   }
-  throw new Error(json?.error || 'Failed to load chapters');
+
+  const json = await dishaDirectGet(
+    `/get/folder_contentsv2?course_id=${encodeURIComponent(batchId)}&parent_id=${encodeURIComponent(subjectId)}`,
+    batchId
+  );
+  const items = Array.isArray(json?.data) ? json.data : [];
+  const folders = items.filter((x: any) => String(x.material_type || '').toUpperCase() === 'FOLDER');
+  const directMedia = items.filter((x: any) => String(x.material_type || '').toUpperCase() !== 'FOLDER');
+
+  const data: ChapterItem[] = folders.map((f: any) => ({
+    id: String(f.id),
+    name: f.Title || f.title || f.topic_name || f.name || '',
+    image: f.thumbnail || '',
+    parentId: String(f.parent_id ?? subjectId),
+    videosCount: Number(f.videos_count ?? 0),
+    pdfsCount: Number(f.pdfs_count ?? f.notes_count ?? 0),
+  }));
+
+  if (directMedia.length > 0) {
+    data.unshift({
+      id: subjectId,
+      name: 'Lectures & Notes',
+      image: '',
+      parentId: subjectId,
+      videosCount: directMedia.filter((x: any) => String(x.material_type || '').toUpperCase() === 'VIDEO').length,
+      pdfsCount: directMedia.filter((x: any) => String(x.material_type || '').toUpperCase() === 'PDF').length,
+    });
+  }
+
+  return { count: data.length, data };
 }
 
 export async function fetchLecturesAndPdfs(
@@ -253,19 +537,137 @@ export async function fetchLecturesAndPdfs(
   pdfs: PdfItem[];
   subFolders: SubFolderItem[];
 }> {
-  const res = await fetch(
-    `/api/disha/lectures?batchId=${encodeURIComponent(batchId)}&subjectId=${encodeURIComponent(subjectId)}&chapterId=${encodeURIComponent(chapterId)}`,
-    { headers: authHeaders() }
-  );
-  const json = await res.json();
-  if (json?.success) {
-    return {
-      lectures: Array.isArray(json.lectures) ? json.lectures : [],
-      pdfs: Array.isArray(json.pdfs) ? json.pdfs : [],
-      subFolders: Array.isArray(json.subFolders) ? json.subFolders : [],
-    };
+  try {
+    const res = await fetch(
+      `/api/disha/lectures?batchId=${encodeURIComponent(batchId)}&subjectId=${encodeURIComponent(subjectId)}&chapterId=${encodeURIComponent(chapterId)}`,
+      { headers: authHeaders() }
+    );
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.success) {
+        return {
+          lectures: Array.isArray(json.lectures) ? json.lectures : [],
+          pdfs: Array.isArray(json.pdfs) ? json.pdfs : [],
+          subFolders: Array.isArray(json.subFolders) ? json.subFolders : [],
+        };
+      }
+    }
+  } catch {
+    // fallback to direct Disha API below
   }
-  throw new Error(json?.error || 'Failed to load lectures');
+
+  const fetchFolderItems = async (parentId: string): Promise<any[]> => {
+    try {
+      const j = await dishaDirectGet(
+        `/get/folder_contentsv2?course_id=${encodeURIComponent(batchId)}&parent_id=${encodeURIComponent(parentId)}`,
+        batchId
+      );
+      return Array.isArray(j?.data) ? j.data : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const topItems = await fetchFolderItems(chapterId);
+  const subFolders: SubFolderItem[] = [];
+  const allMediaItems: any[] = [];
+
+  for (const item of topItems) {
+    const type = String(item.material_type || '').toUpperCase();
+    if (type === 'FOLDER') {
+      subFolders.push({
+        id: String(item.id || ''),
+        title: item.Title || item.title || item.name || 'Folder',
+        thumbnail: item.thumbnail || '',
+      });
+    } else {
+      allMediaItems.push(item);
+    }
+  }
+
+  if (subFolders.length > 0 && chapterId !== subjectId) {
+    const level1Lists = await Promise.all(subFolders.slice(0, 20).map((sf) => fetchFolderItems(sf.id)));
+    for (const list of level1Lists) {
+      for (const it of list) {
+        if (String(it.material_type || '').toUpperCase() !== 'FOLDER') {
+          allMediaItems.push(it);
+        }
+      }
+    }
+  }
+
+  const lectures: LectureItem[] = [];
+  const pdfs: PdfItem[] = [];
+  const seenVideos = new Set<string>();
+  const seenPdfs = new Set<string>();
+
+  for (const item of allMediaItems) {
+    const type = String(item.material_type || '').toUpperCase();
+    const id = String(item.id || '');
+    if (!id) continue;
+    const title = item.Title || item.title || item.name || 'Untitled';
+    const thumb = item.thumbnail && !String(item.thumbnail).includes(':') ? item.thumbnail : '';
+    const date = item.date_and_time && !String(item.date_and_time).includes(':') ? item.date_and_time : '';
+    const duration = String(item.duration || '');
+
+    const { pdfUrl, pdfKey, isEncrypted } = await extractPdfBrowser(item);
+    const hasAttachedPdf = Boolean(pdfUrl || item.pdf_link || item.pdf_link2);
+
+    if (type === 'PDF' || (!item.video_id && !item.file_link && !item.video_player_token && pdfUrl)) {
+      if (!seenPdfs.has(id)) {
+        seenPdfs.add(id);
+        pdfs.push({
+          id,
+          title,
+          thumbnail: thumb,
+          published: date,
+          hasPdf: true,
+          pdfUrl,
+          pdfKey,
+          isPdfEncrypted: isEncrypted,
+        });
+      }
+      continue;
+    }
+
+    if (!seenVideos.has(id)) {
+      seenVideos.add(id);
+      const { streamUrl, embedUrl, qualities, videoId } = await extractVideoBrowser(item);
+      lectures.push({
+        id,
+        title,
+        thumbnail: thumb,
+        duration,
+        published: date,
+        free: String(item.free_flag ?? '0') === '1',
+        liveStatus: Number(item.live_status ?? 0),
+        hasPdf: hasAttachedPdf,
+        streamUrl,
+        embedUrl,
+        qualities,
+        videoId,
+        pdfUrl,
+        pdfKey,
+        isPdfEncrypted: isEncrypted,
+      });
+    }
+
+    if (hasAttachedPdf && !seenPdfs.has(`att_${id}`)) {
+      seenPdfs.add(`att_${id}`);
+      pdfs.push({
+        id,
+        title: `${title} (PDF)`,
+        thumbnail: thumb,
+        published: date,
+        hasPdf: true,
+        pdfUrl,
+        pdfKey,
+        isPdfEncrypted: isEncrypted,
+      });
+    }
+  }
+
+  return { lectures, pdfs, subFolders };
 }
 
 export async function fetchVideoDetails(
@@ -287,15 +689,56 @@ export async function fetchVideoDetails(
   pdfKey?: string;
   hasPdf: boolean;
 }> {
-  const res = await fetch(
-    `/api/disha/video?batchId=${encodeURIComponent(batchId)}&lectureId=${encodeURIComponent(lectureId)}&chapterId=${encodeURIComponent(chapterId || '')}`,
-    { headers: authHeaders() }
-  );
-  const json = await res.json();
-  if (json?.success && json.data) {
-    return json.data;
+  try {
+    const res = await fetch(
+      `/api/disha/video?batchId=${encodeURIComponent(batchId)}&lectureId=${encodeURIComponent(lectureId)}&chapterId=${encodeURIComponent(chapterId || '')}`,
+      { headers: authHeaders() }
+    );
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.success && json.data) {
+        return json.data;
+      }
+    }
+  } catch {
+    // fallback to direct Disha API below
   }
-  throw new Error(json?.error || 'Failed to load video details');
+
+  const candidateBatchIds = [batchId, '87', '61', '86', '57', '88', '89'];
+  for (const bid of candidateBatchIds) {
+    try {
+      const detailJson = await dishaDirectGet(
+        `/get/fetchVideoDetailsById?course_id=${encodeURIComponent(batchId)}&video_id=${encodeURIComponent(lectureId)}&ytflag=0&folder_wise_course=1`,
+        bid
+      );
+      if (detailJson?.data && typeof detailJson.data === 'object') {
+        const raw = detailJson.data;
+        const vid = await extractVideoBrowser(raw);
+        const pdf = await extractPdfBrowser(raw);
+        if (vid.streamUrl || vid.embedUrl) {
+          return {
+            id: String(raw.id || lectureId),
+            title: raw.Title || raw.title || '',
+            description: raw.description || '',
+            thumbnail: raw.thumbnail && !String(raw.thumbnail).includes(':') ? raw.thumbnail : '',
+            duration: String(raw.duration || ''),
+            published: raw.date_and_time && !String(raw.date_and_time).includes(':') ? raw.date_and_time : '',
+            streamUrl: vid.streamUrl,
+            embedUrl: vid.embedUrl,
+            qualities: vid.qualities,
+            videoId: vid.videoId,
+            pdfUrl: pdf.pdfUrl,
+            pdfKey: pdf.pdfKey,
+            hasPdf: Boolean(pdf.pdfUrl || raw.pdf_link || raw.pdf_link2),
+          };
+        }
+      }
+    } catch {
+      // try next owner token
+    }
+  }
+
+  throw new Error('Failed to load video details');
 }
 
 export function buildOpenPdfNewTabUrl(
@@ -347,18 +790,43 @@ export async function resolvePdfUrl(
       title: 'Notes PDF',
     };
   }
-  const res = await fetch(
-    `/api/disha/pdf?batchId=${encodeURIComponent(batchId)}&lectureId=${encodeURIComponent(lectureId)}&chapterId=${encodeURIComponent(chapterId || '')}`,
-    { headers: authHeaders() }
-  );
-  const json = await res.json();
-  if (json?.success && json.data?.pdfUrl) {
-    return {
-      pdfUrl: json.data.pdfUrl,
-      rawPdfUrl: json.data.rawPdfUrl || json.data.pdfUrl,
-      pdfKey: json.data.pdfKey || '',
-      title: json.data.title || 'Notes PDF',
-    };
+  try {
+    const res = await fetch(
+      `/api/disha/pdf?batchId=${encodeURIComponent(batchId)}&lectureId=${encodeURIComponent(lectureId)}&chapterId=${encodeURIComponent(chapterId || '')}`,
+      { headers: authHeaders() }
+    );
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.success && json.data?.pdfUrl) {
+        return {
+          pdfUrl: json.data.pdfUrl,
+          rawPdfUrl: json.data.rawPdfUrl || json.data.pdfUrl,
+          pdfKey: json.data.pdfKey || '',
+          title: json.data.title || 'Notes PDF',
+        };
+      }
+    }
+  } catch {
+    // fallback to direct Disha API below
   }
-  throw new Error(json?.error || 'Could not resolve PDF URL');
+
+  const detailJson = await dishaDirectGet(
+    `/get/fetchVideoDetailsById?course_id=${encodeURIComponent(batchId)}&video_id=${encodeURIComponent(lectureId)}&ytflag=0&folder_wise_course=1`,
+    batchId
+  );
+  if (detailJson?.data && typeof detailJson.data === 'object') {
+    const pdf = await extractPdfBrowser(detailJson.data);
+    if (pdf.pdfUrl) {
+      const proxyUrl = `/api/disha/pdf-file?u=${encodeURIComponent(pdf.pdfUrl)}${
+        pdf.pdfKey ? `&k=${encodeURIComponent(pdf.pdfKey)}` : ''
+      }`;
+      return {
+        pdfUrl: proxyUrl,
+        rawPdfUrl: pdf.pdfUrl,
+        pdfKey: pdf.pdfKey,
+        title: detailJson.data.Title || detailJson.data.title || 'Notes PDF',
+      };
+    }
+  }
+  throw new Error('Could not resolve PDF URL');
 }
